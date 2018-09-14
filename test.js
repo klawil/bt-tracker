@@ -9,5 +9,5 @@ noble.on('stateChange', function(state) {
 });
 
 noble.on('discover', function(p) {
-  console.log(`${p.address} (${p.addressType}): ${p.rssi}`);
+  console.log(`${p.advertisement.localName} (${p.address} [${p.addressType}]): ${p.rssi}`);
 });
