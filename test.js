@@ -29,11 +29,6 @@ noble.on('discover', function(p) {
 
   stdout.cursorTo(0, ids[p.address].line);
   stdout.write(`${lineStart} ${p.rssi} (${ids[p.address].count})`);
-
-  p.on('rssiUpdate', (rssi) => {
-    stdout.cursorTo(0, ids[p.address].line);
-    stdout.write(`${lineStart} ${rssi}* (${ids[p.address].count})`);
-  });
 });
 
 process.on('SIGINT', function() {
