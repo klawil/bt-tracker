@@ -19,25 +19,22 @@ noble.on('discover', function(p) {
 
   let count = 1;
 
-  let lineStart = `\r${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
+  let lineStart = `${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
 
-  stdout.cursorTo(localIndex);
+  stdout.cursorTo(0, localIndex);
   stdout.write(`${lineStart} ${p.rssi} (${count})`);
 
-  function update() {
-    p.updateRssi((err, rssi) => {
+  p.on('rssiUpdate', (rssi) => {
       setTimeout(update, 500);
-
-      stdout.cursorTo(localIndex);
-
-      if (err) {
-        stdout.write(`${lineStart} ${err}`);
-        return;
-      }
-
       count++;
+
+      stdout.cursorTo(0, localIndex);
+
       stdout.write(`${lineStart} ${rssi} (${count})`);
-    });
+  });
+
+  function update() {
+    p.updateRssi();
   }
 
   setTimeout(update, 500);
