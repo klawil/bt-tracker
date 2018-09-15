@@ -19,7 +19,7 @@ noble.on('discover', function(p) {
 
   let count = 1;
 
-  let lineStart = `${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
+  let lineStart = `\r${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
 
   stdout.cursorTo(localIndex);
   stdout.write(`${lineStart} ${p.rssi} (${count})`);
