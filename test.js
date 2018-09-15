@@ -35,3 +35,8 @@ noble.on('discover', function(p) {
     stdout.write(`${lineStart} ${rssi}* (${ids[p.address].count})`);
   });
 });
+
+process.on('SIGINT', function() {
+  stdout.cursorTo(0, index++);
+  process.exit();
+});
