@@ -4,6 +4,7 @@ const noble = require('noble');
 process.stdout.write('\x1Bc');
 
 // Used to determine which line we should use
+let ids = {};
 let index = 0;
 let stdout = process.stdout;
 
@@ -14,28 +15,23 @@ noble.on('stateChange', function(state) {
 });
 
 noble.on('discover', function(p) {
-  let localIndex = index;
-  index++;
-
-  let count = 1;
-
   let lineStart = `${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
 
-  stdout.cursorTo(0, localIndex);
-  stdout.write(`${lineStart} ${p.rssi} (${count})`);
-
-  p.on('rssiUpdate', (rssi) => {
-      setTimeout(update, 500);
-      count++;
-
-      stdout.cursorTo(0, localIndex);
-
-      stdout.write(`${lineStart} ${rssi} (${count})`);
-  });
-
-  function update() {
-    p.updateRssi();
+  if (typeof ids[p.address] === 'undefined') {
+    ids[p.address] = {
+      count: 0,
+      line: index
+    }
+    index++;
   }
 
-  setTimeout(update, 500);
+  ids[p.address].count++;
+
+  stdout.cursorTo(0, localIndex);
+  stdout.write(`${lineStart} ${p.rssi} (${ids[p.address].count})`);
+
+  p.on('rssiUpdate', (rssi) => {
+    stdout.cursorTo(0, localIndex);
+    stdout.write(`${lineStart} ${rssi}* (${ids[p.address].count})`);
+  });
 });
