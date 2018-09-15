@@ -27,11 +27,11 @@ noble.on('discover', function(p) {
 
   ids[p.address].count++;
 
-  stdout.cursorTo(0, localIndex);
+  stdout.cursorTo(0, ids[p.address].line);
   stdout.write(`${lineStart} ${p.rssi} (${ids[p.address].count})`);
 
   p.on('rssiUpdate', (rssi) => {
-    stdout.cursorTo(0, localIndex);
+    stdout.cursorTo(0, ids[p.address].line);
     stdout.write(`${lineStart} ${rssi}* (${ids[p.address].count})`);
   });
 });
