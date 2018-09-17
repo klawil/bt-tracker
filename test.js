@@ -28,7 +28,7 @@ noble.on('discover', function(p) {
   ids[p.address].count++;
 
   stdout.cursorTo(0, ids[p.address].line);
-  stdout.write(`${lineStart} ${p.rssi} (${ids[p.address].count})`);
+  stdout.write(`${lineStart} ${p.rssi} ${p.advertisement.txPowerLevel} (${ids[p.address].count})`);
 });
 
 process.on('SIGINT', function() {
