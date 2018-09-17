@@ -18,17 +18,20 @@ noble.on('discover', function(p) {
   let lineStart = `${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
 
   if (typeof ids[p.address] === 'undefined') {
-    ids[p.address] = {
-      count: 0,
-      line: index
-    }
+    ids[p.address] = index;
     index++;
   }
 
-  ids[p.address].count++;
+  let power = p.measuredPower || p.advertisement.txPower || p.advertisement.txPowerLevel;
 
-  stdout.cursorTo(0, ids[p.address].line);
-  stdout.write(`${lineStart} ${p.rssi} ${p.advertisement.txPowerLevel} (${ids[p.address].count})`);
+  let powerInt = p.measuredPower
+    ? 0
+    : p.advertisement.txPower
+      ? 1
+      : 2;
+
+  stdout.cursorTo(0, ids[p.address]);
+  stdout.write(`${lineStart} ${p.rssi} ${power} (${powerInt})`);
 });
 
 process.on('SIGINT', function() {
