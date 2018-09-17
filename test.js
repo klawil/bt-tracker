@@ -7,6 +7,7 @@ process.stdout.write('\x1Bc');
 let ids = {};
 let index = 0;
 let stdout = process.stdout;
+let longest = 0;
 
 noble.on('stateChange', function(state) {
   if (state === 'poweredOn') {
@@ -15,7 +16,13 @@ noble.on('stateChange', function(state) {
 });
 
 noble.on('discover', function(p) {
-  let lineStart = `${p.advertisement.localName} (${p.address} [${p.addressType}]): `;
+  let lineStart = `${p.advertisement.localName} (${p.address} [${p.addressType}]):`;
+
+  if (lineStart.length > longest) {
+    longest = lineStart.length;
+  }
+
+  lineStart = lineStart + ' '.repeat(lineStart.length - longest);
 
   if (typeof ids[p.address] === 'undefined') {
     ids[p.address] = index;
@@ -35,7 +42,14 @@ noble.on('discover', function(p) {
   if (dist > 10E4) {
     dist = 'OVER  ';
   } else {
-    dist = ('000000' + dist.toString()).slice(-6);
+    dist = dist.toString().split('.');
+    if (dist.length < 2) {
+      dist.push('00');
+    } else {
+      dist[1] = ('00' + dist[1]).slice(-2);
+    }
+
+    dist = ('000000' + dist.join('.')).slice(-6);
   }
 
   stdout.cursorTo(0, ids[p.address]);
