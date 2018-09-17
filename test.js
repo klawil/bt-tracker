@@ -22,7 +22,7 @@ noble.on('discover', function(p) {
     longest = lineStart.length;
   }
 
-  lineStart = lineStart + ' '.repeat(lineStart.length - longest);
+  lineStart = lineStart + ' '.repeat(longest - lineStart.length);
 
   if (typeof ids[p.address] === 'undefined') {
     ids[p.address] = index;
