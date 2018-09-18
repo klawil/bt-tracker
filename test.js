@@ -1,4 +1,5 @@
 const noble = require('noble');
+const KalmanFilter = require('kalmanjs').default;
 
 // Clear the console
 process.stdout.write('\x1Bc');
@@ -8,6 +9,7 @@ let ids = {};
 let index = 0;
 let stdout = process.stdout;
 let longest = 0;
+let filters = {};
 
 noble.on('stateChange', function(state) {
   if (state === 'poweredOn') {
@@ -37,7 +39,7 @@ noble.on('discover', function(p) {
       ? 1
       : 2;
 
-  let dist = Math.round(distance(p.rssi, power) * 100) / 100;
+  let dist = Math.round(distance(p.address, p.rssi, power) * 100) / 100;
 
   if (dist > 10E4) {
     dist = 'OVER  ';
@@ -61,7 +63,7 @@ process.on('SIGINT', function() {
   process.exit();
 });
 
-function distance(rssi, txPower) {
+function distance(id, rssi, txPower) {
   if (rssi === 0) {
     return -1.0;
   }
@@ -71,9 +73,22 @@ function distance(rssi, txPower) {
   }
 
   const ratio = rssi * 1.0 / txPower;
+  let distance;
   if (ratio < 1.0) {
-    return Math.pow(ratio, 10);
+    distance = Math.pow(ratio, 10);
+  } else {
+    distance = (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
   }
 
-  return (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
+  distance = smoothDistance(id, distance);
+
+  return distance;
+}
+
+function smoothDistance(id, distance) {
+  if (typeof filters[id] === 'undefined') {
+    filters[id] = new KalmanFilter();
+  }
+
+  return filters[id].filter(distance);
 }

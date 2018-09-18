@@ -10,6 +10,7 @@
     "url": "https://www.github.com/klawil/bt-tracker"
   },
   "dependencies": {
+    "kalmanjs": "^1.0.0-beta",
     "noble": "^1.9.1"
   },
   "scripts": {
