@@ -9,6 +9,7 @@ let ids = [];
 let stdout = process.stdout;
 let longest = 0;
 let filters = {};
+let last = 0;
 
 noble.on('stateChange', function(state) {
   if (state === 'poweredOn') {
@@ -45,10 +46,15 @@ noble.on('discover', function(p) {
 
   data.dist = Math.round(distance(p.address, p.rssi, power) * 100) / 100;
 
-  ids
-    .sort((a, b) => a.dist < b.dist 
+  if (Date.now() - last > 5000) {
+    ids = ids.sort((a, b) => a.dist < b.dist
       ? -1
-      : 1)
+      : 1);
+
+    last = Date.now();
+  }
+
+  ids
     .forEach(printData);
 });
 
