@@ -53,7 +53,7 @@ noble.on('discover', function(p) {
 });
 
 process.on('SIGINT', function() {
-  stdout.cursorTo(0, index++);
+  stdout.cursorTo(0, ids.length);
   process.exit();
 });
 
